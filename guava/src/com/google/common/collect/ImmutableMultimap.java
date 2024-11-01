@@ -19,7 +19,10 @@ package com.google.common.collect;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.CollectPreconditions.checkEntryNotNull;
 import static com.google.common.collect.CollectPreconditions.checkNonnegative;
+import static com.google.common.collect.Iterators.emptyIterator;
 import static com.google.common.collect.Maps.immutableEntry;
+import static java.lang.Math.max;
+import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.GwtCompatible;
@@ -33,7 +36,6 @@ import com.google.j2objc.annotations.WeakOuter;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -213,7 +215,7 @@ public abstract class ImmutableMultimap<K, V> extends BaseImmutableMultimap<K, V
 
       // Always presize to at least 1, since we only bother creating a value collection if there's
       // at least one element.
-      this.expectedValuesPerKey = Math.max(expectedValuesPerKey, 1);
+      this.expectedValuesPerKey = max(expectedValuesPerKey, 1);
 
       return this;
     }
@@ -228,7 +230,7 @@ public abstract class ImmutableMultimap<K, V> extends BaseImmutableMultimap<K, V
     int expectedValueCollectionSize(int defaultExpectedValues, Iterable<?> values) {
       if (values instanceof Collection<?>) {
         Collection<?> collection = (Collection<?>) values;
-        return Math.max(defaultExpectedValues, collection.size());
+        return max(defaultExpectedValues, collection.size());
       } else {
         return defaultExpectedValues;
       }
@@ -308,7 +310,7 @@ public abstract class ImmutableMultimap<K, V> extends BaseImmutableMultimap<K, V
      */
     @CanIgnoreReturnValue
     public Builder<K, V> putAll(K key, V... values) {
-      return putAll(key, Arrays.asList(values));
+      return putAll(key, asList(values));
     }
 
     /**
@@ -666,7 +668,7 @@ public abstract class ImmutableMultimap<K, V> extends BaseImmutableMultimap<K, V
       final Iterator<? extends Entry<K, ? extends ImmutableCollection<V>>> asMapItr =
           map.entrySet().iterator();
       @CheckForNull K currentKey = null;
-      Iterator<V> valueItr = Iterators.emptyIterator();
+      Iterator<V> valueItr = emptyIterator();
 
       @Override
       public boolean hasNext() {
@@ -697,7 +699,7 @@ public abstract class ImmutableMultimap<K, V> extends BaseImmutableMultimap<K, V
           K key = keyToValueCollectionEntry.getKey();
           Collection<V> valueCollection = keyToValueCollectionEntry.getValue();
           return CollectSpliterators.map(
-              valueCollection.spliterator(), (V value) -> Maps.immutableEntry(key, value));
+              valueCollection.spliterator(), (V value) -> immutableEntry(key, value));
         },
         Spliterator.SIZED | (this instanceof SetMultimap ? Spliterator.DISTINCT : 0),
         size());
@@ -807,7 +809,7 @@ public abstract class ImmutableMultimap<K, V> extends BaseImmutableMultimap<K, V
   UnmodifiableIterator<V> valueIterator() {
     return new UnmodifiableIterator<V>() {
       Iterator<? extends ImmutableCollection<V>> valueCollectionItr = map.values().iterator();
-      Iterator<V> valueItr = Iterators.emptyIterator();
+      Iterator<V> valueItr = emptyIterator();
 
       @Override
       public boolean hasNext() {

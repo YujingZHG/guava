@@ -16,6 +16,9 @@
 
 package com.google.common.collect.testing.google;
 
+import static com.google.common.collect.Maps.immutableEntry;
+import static java.util.Collections.singleton;
+import static java.util.Collections.unmodifiableList;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
@@ -24,12 +27,10 @@ import com.google.common.annotations.GwtCompatible;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.LinkedHashMultiset;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multiset;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
@@ -275,12 +276,11 @@ public class UnmodifiableCollectionTests {
    */
   public static <K extends @Nullable Object, V extends @Nullable Object>
       void assertMultimapIsUnmodifiable(Multimap<K, V> multimap, K sampleKey, V sampleValue) {
-    List<Entry<K, V>> originalEntries =
-        Collections.unmodifiableList(Lists.newArrayList(multimap.entries()));
+    List<Entry<K, V>> originalEntries = unmodifiableList(Lists.newArrayList(multimap.entries()));
 
     assertMultimapRemainsUnmodified(multimap, originalEntries);
 
-    Collection<V> sampleValueAsCollection = Collections.singleton(sampleValue);
+    Collection<V> sampleValueAsCollection = singleton(sampleValue);
 
     // Test #clear()
     try {
@@ -293,7 +293,7 @@ public class UnmodifiableCollectionTests {
 
     // Test asMap().entrySet()
     assertSetIsUnmodifiable(
-        multimap.asMap().entrySet(), Maps.immutableEntry(sampleKey, sampleValueAsCollection));
+        multimap.asMap().entrySet(), immutableEntry(sampleKey, sampleValueAsCollection));
 
     // Test #values()
 
@@ -305,7 +305,7 @@ public class UnmodifiableCollectionTests {
     }
 
     // Test #entries()
-    assertCollectionIsUnmodifiable(multimap.entries(), Maps.immutableEntry(sampleKey, sampleValue));
+    assertCollectionIsUnmodifiable(multimap.entries(), immutableEntry(sampleKey, sampleValue));
     assertMultimapRemainsUnmodified(multimap, originalEntries);
 
     // Iterate over every element in the entry set

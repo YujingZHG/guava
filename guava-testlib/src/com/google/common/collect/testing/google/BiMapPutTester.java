@@ -16,15 +16,16 @@
 
 package com.google.common.collect.testing.google;
 
+import static com.google.common.collect.testing.Helpers.mapEntry;
 import static com.google.common.collect.testing.features.CollectionSize.ONE;
 import static com.google.common.collect.testing.features.CollectionSize.SEVERAL;
 import static com.google.common.collect.testing.features.CollectionSize.ZERO;
 import static com.google.common.collect.testing.features.MapFeature.ALLOWS_NULL_KEYS;
 import static com.google.common.collect.testing.features.MapFeature.ALLOWS_NULL_VALUES;
 import static com.google.common.collect.testing.features.MapFeature.SUPPORTS_PUT;
+import static com.google.common.collect.testing.google.ReflectionFreeAssertThrows.assertThrows;
 
 import com.google.common.annotations.GwtCompatible;
-import com.google.common.collect.testing.Helpers;
 import com.google.common.collect.testing.features.CollectionSize;
 import com.google.common.collect.testing.features.MapFeature;
 import org.junit.Ignore;
@@ -39,12 +40,7 @@ public class BiMapPutTester<K, V> extends AbstractBiMapTester<K, V> {
   @CollectionSize.Require(ZERO)
   public void testPutWithSameValueFails() {
     getMap().put(k0(), v0());
-    try {
-      getMap().put(k1(), v0());
-      fail("Expected IllegalArgumentException");
-    } catch (IllegalArgumentException expected) {
-      // success
-    }
+    assertThrows(IllegalArgumentException.class, () -> getMap().put(k1(), v0()));
     // verify that the bimap is unchanged
     expectAdded(e0());
   }
@@ -56,7 +52,7 @@ public class BiMapPutTester<K, V> extends AbstractBiMapTester<K, V> {
     getMap().put(k0(), v1());
     // verify that the bimap is changed, and that the old inverse mapping
     // from v1 -> v0 is deleted
-    expectContents(Helpers.mapEntry(k0(), v1()));
+    expectContents(mapEntry(k0(), v1()));
   }
 
   @MapFeature.Require(SUPPORTS_PUT)
@@ -71,7 +67,7 @@ public class BiMapPutTester<K, V> extends AbstractBiMapTester<K, V> {
   @CollectionSize.Require(ONE)
   public void testForcePutKeyPresent() {
     getMap().forcePut(k0(), v1());
-    expectContents(Helpers.mapEntry(k0(), v1()));
+    expectContents(mapEntry(k0(), v1()));
     assertFalse(getMap().containsValue(v0()));
     assertNull(getMap().inverse().get(v0()));
     assertEquals(1, getMap().size());
@@ -82,7 +78,7 @@ public class BiMapPutTester<K, V> extends AbstractBiMapTester<K, V> {
   @CollectionSize.Require(ONE)
   public void testForcePutValuePresent() {
     getMap().forcePut(k1(), v0());
-    expectContents(Helpers.mapEntry(k1(), v0()));
+    expectContents(mapEntry(k1(), v0()));
     assertEquals(k1(), getMap().inverse().get(v0()));
     assertEquals(1, getMap().size());
     assertFalse(getMap().containsKey(k0()));
@@ -92,7 +88,7 @@ public class BiMapPutTester<K, V> extends AbstractBiMapTester<K, V> {
   @CollectionSize.Require(SEVERAL)
   public void testForcePutKeyAndValuePresent() {
     getMap().forcePut(k0(), v1());
-    expectContents(Helpers.mapEntry(k0(), v1()), Helpers.mapEntry(k2(), v2()));
+    expectContents(mapEntry(k0(), v1()), mapEntry(k2(), v2()));
     assertEquals(2, getMap().size());
     assertFalse(getMap().containsKey(k1()));
     assertFalse(getMap().containsValue(v0()));
@@ -105,7 +101,7 @@ public class BiMapPutTester<K, V> extends AbstractBiMapTester<K, V> {
 
     getMap().forcePut(null, v1());
 
-    expectContents(Helpers.mapEntry((K) null, v1()));
+    expectContents(mapEntry((K) null, v1()));
 
     assertFalse(getMap().containsValue(v0()));
 
@@ -123,7 +119,7 @@ public class BiMapPutTester<K, V> extends AbstractBiMapTester<K, V> {
 
     getMap().forcePut(k1(), null);
 
-    expectContents(Helpers.mapEntry(k1(), (V) null));
+    expectContents(mapEntry(k1(), (V) null));
 
     assertFalse(getMap().containsKey(k0()));
 

@@ -20,6 +20,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.CollectPreconditions.checkEntryNotNull;
 import static com.google.common.collect.CollectPreconditions.checkNonnegative;
+import static java.lang.System.arraycopy;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.GwtCompatible;
@@ -82,7 +83,7 @@ public abstract class ImmutableMap<K, V> implements Map<K, V>, Serializable {
    *
    * @since 33.2.0 (available since 21.0 in guava-jre)
    */
-  @SuppressWarnings({"AndroidJdkLibsChecker", "Java7ApiChecker"})
+  @SuppressWarnings("Java7ApiChecker")
   @IgnoreJRERequirement // Users will use this only if they're already using streams.
   public static <T extends @Nullable Object, K, V>
       Collector<T, ?, ImmutableMap<K, V>> toImmutableMap(
@@ -104,7 +105,7 @@ public abstract class ImmutableMap<K, V> implements Map<K, V>, Serializable {
    *
    * @since 33.2.0 (available since 21.0 in guava-jre)
    */
-  @SuppressWarnings({"AndroidJdkLibsChecker", "Java7ApiChecker"})
+  @SuppressWarnings("Java7ApiChecker")
   @IgnoreJRERequirement // Users will use this only if they're already using streams.
   public static <T extends @Nullable Object, K, V>
       Collector<T, ?, ImmutableMap<K, V>> toImmutableMap(
@@ -548,7 +549,7 @@ public abstract class ImmutableMap<K, V> implements Map<K, V>, Serializable {
     Builder<K, V> combine(Builder<K, V> other) {
       checkNotNull(other);
       ensureCapacity(this.size + other.size);
-      System.arraycopy(
+      arraycopy(
           other.alternatingKeysAndValues,
           0,
           this.alternatingKeysAndValues,
@@ -893,7 +894,7 @@ public abstract class ImmutableMap<K, V> implements Map<K, V>, Serializable {
    *     Note, however, that Java 8+ users can call this method with any version and flavor of
    *     Guava.
    */
-  // @Override under Java 8 / API Level 24
+  @Override
   @CheckForNull
   public final V getOrDefault(@CheckForNull Object key, @CheckForNull V defaultValue) {
     /*

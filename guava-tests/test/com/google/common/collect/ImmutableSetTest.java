@@ -16,7 +16,9 @@
 
 package com.google.common.collect;
 
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static com.google.common.truth.Truth.assertThat;
+import static java.util.Collections.singleton;
 import static org.junit.Assert.assertThrows;
 
 import com.google.common.annotations.GwtCompatible;
@@ -40,7 +42,6 @@ import com.google.common.collect.testing.google.SetGenerators.ImmutableSetWithBa
 import com.google.common.testing.CollectorTester;
 import com.google.common.testing.EqualsTester;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.function.BiPredicate;
@@ -248,7 +249,7 @@ public class ImmutableSetTest extends AbstractImmutableSetTest {
   public void testCreation_arrayOfArray() {
     String[] array = new String[] {"a"};
     Set<String[]> set = ImmutableSet.<String[]>of(array);
-    assertEquals(Collections.singleton(array), set);
+    assertEquals(singleton(array), set);
   }
 
   @GwtIncompatible // ImmutableSet.chooseTableSize
@@ -298,7 +299,7 @@ public class ImmutableSetTest extends AbstractImmutableSetTest {
   }
 
   public void testToImmutableSet() {
-    Collector<String, ?, ImmutableSet<String>> collector = ImmutableSet.toImmutableSet();
+    Collector<String, ?, ImmutableSet<String>> collector = toImmutableSet();
     Equivalence<ImmutableSet<String>> equivalence =
         Equivalence.equals().onResultOf(ImmutableSet::asList);
     CollectorTester.of(collector, equivalence)
@@ -330,8 +331,7 @@ public class ImmutableSetTest extends AbstractImmutableSetTest {
       }
     }
 
-    Collector<TypeWithDuplicates, ?, ImmutableSet<TypeWithDuplicates>> collector =
-        ImmutableSet.toImmutableSet();
+    Collector<TypeWithDuplicates, ?, ImmutableSet<TypeWithDuplicates>> collector = toImmutableSet();
     BiPredicate<ImmutableSet<TypeWithDuplicates>, ImmutableSet<TypeWithDuplicates>> equivalence =
         (set1, set2) -> {
           if (!set1.equals(set2)) {

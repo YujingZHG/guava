@@ -195,6 +195,8 @@ public final class UnsignedInts {
     INSTANCE;
 
     @Override
+    // A call to bare "min" or "max" would resolve to our varargs method, not to any static import.
+    @SuppressWarnings("StaticImportPreferred")
     public int compare(int[] left, int[] right) {
       int minLength = Math.min(left.length, right.length);
       for (int i = 0; i < minLength; i++) {

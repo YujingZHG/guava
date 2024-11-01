@@ -63,7 +63,7 @@ import javax.annotation.CheckForNull;
  * now available via the JDK's {@link java.nio.file.Files} class for {@code Path} - check the JDK's
  * class if a sibling method from {@code Files} appears to be missing from this class.
  *
- * @since 21.0
+ * @since 21.0 (but only since 33.4.0 in the Android flavor)
  * @author Colin Decker
  */
 @J2ktIncompatible

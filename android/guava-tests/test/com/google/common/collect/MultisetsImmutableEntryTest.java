@@ -16,9 +16,11 @@
 
 package com.google.common.collect;
 
+import static com.google.common.collect.ReflectionFreeAssertThrows.assertThrows;
+import static java.util.Collections.nCopies;
+
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.collect.Multiset.Entry;
-import java.util.Collections;
 import junit.framework.TestCase;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -37,7 +39,7 @@ public class MultisetsImmutableEntryTest extends TestCase {
   }
 
   private static <E extends @Nullable Object> Entry<E> control(E element, int count) {
-    return HashMultiset.create(Collections.nCopies(count, element)).entrySet().iterator().next();
+    return HashMultiset.create(nCopies(count, element)).entrySet().iterator().next();
   }
 
   public void testToString() {
@@ -77,10 +79,6 @@ public class MultisetsImmutableEntryTest extends TestCase {
   }
 
   public void testNegativeCount() {
-    try {
-      entry("foo", -1);
-      fail();
-    } catch (IllegalArgumentException expected) {
-    }
+    assertThrows(IllegalArgumentException.class, () -> entry("foo", -1));
   }
 }

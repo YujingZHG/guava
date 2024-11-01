@@ -16,7 +16,9 @@
 
 package com.google.common.collect;
 
+import static com.google.common.collect.Maps.immutableEntry;
 import static com.google.common.truth.Truth.assertThat;
+import static java.util.Collections.singleton;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
@@ -198,25 +200,25 @@ public class TreeBasedTableTest extends AbstractTableTest<Character> {
   public void testRowKeySetHeadSet() {
     sortedTable = create("foo", 1, 'a', "bar", 1, 'b', "foo", 3, 'c');
     Set<String> set = sortedTable.rowKeySet().headSet("cat");
-    assertEquals(Collections.singleton("bar"), set);
+    assertEquals(singleton("bar"), set);
     set.clear();
     assertTrue(set.isEmpty());
-    assertEquals(Collections.singleton("foo"), sortedTable.rowKeySet());
+    assertEquals(singleton("foo"), sortedTable.rowKeySet());
   }
 
   public void testRowKeySetTailSet() {
     sortedTable = create("foo", 1, 'a', "bar", 1, 'b', "foo", 3, 'c');
     Set<String> set = sortedTable.rowKeySet().tailSet("cat");
-    assertEquals(Collections.singleton("foo"), set);
+    assertEquals(singleton("foo"), set);
     set.clear();
     assertTrue(set.isEmpty());
-    assertEquals(Collections.singleton("bar"), sortedTable.rowKeySet());
+    assertEquals(singleton("bar"), sortedTable.rowKeySet());
   }
 
   public void testRowKeySetSubSet() {
     sortedTable = create("foo", 1, 'a', "bar", 1, 'b', "foo", 3, 'c', "dog", 2, 'd');
     Set<String> set = sortedTable.rowKeySet().subSet("cat", "egg");
-    assertEquals(Collections.singleton("dog"), set);
+    assertEquals(singleton("dog"), set);
     set.clear();
     assertTrue(set.isEmpty());
     assertEquals(ImmutableSet.of("bar", "foo"), sortedTable.rowKeySet());
@@ -247,7 +249,7 @@ public class TreeBasedTableTest extends AbstractTableTest<Character> {
     assertEquals(ImmutableMap.of(1, 'b'), map.get("bar"));
     map.clear();
     assertTrue(map.isEmpty());
-    assertEquals(Collections.singleton("foo"), sortedTable.rowKeySet());
+    assertEquals(singleton("foo"), sortedTable.rowKeySet());
   }
 
   public void testRowKeyMapTailMap() {
@@ -257,7 +259,7 @@ public class TreeBasedTableTest extends AbstractTableTest<Character> {
     assertEquals(ImmutableMap.of(1, 'a', 3, 'c'), map.get("foo"));
     map.clear();
     assertTrue(map.isEmpty());
-    assertEquals(Collections.singleton("bar"), sortedTable.rowKeySet());
+    assertEquals(singleton("bar"), sortedTable.rowKeySet());
   }
 
   public void testRowKeyMapSubMap() {
@@ -351,13 +353,13 @@ public class TreeBasedTableTest extends AbstractTableTest<Character> {
                 20, 'X', "d", 15, 'X', "d", 20, 'X', "d", 1, 'X', "e", 5, 'X');
     SortedMap<Integer, Character> row = sortedTable.row("c");
     Set<Entry<Integer, Character>> entrySet = row.entrySet();
-    assertTrue(entrySet.contains(Maps.immutableEntry(10, 'X')));
-    assertTrue(entrySet.contains(Maps.immutableEntry(20, 'X')));
-    assertFalse(entrySet.contains(Maps.immutableEntry(15, 'X')));
+    assertTrue(entrySet.contains(immutableEntry(10, 'X')));
+    assertTrue(entrySet.contains(immutableEntry(20, 'X')));
+    assertFalse(entrySet.contains(immutableEntry(15, 'X')));
     entrySet = row.tailMap(15).entrySet();
-    assertFalse(entrySet.contains(Maps.immutableEntry(10, 'X')));
-    assertTrue(entrySet.contains(Maps.immutableEntry(20, 'X')));
-    assertFalse(entrySet.contains(Maps.immutableEntry(15, 'X')));
+    assertFalse(entrySet.contains(immutableEntry(10, 'X')));
+    assertTrue(entrySet.contains(immutableEntry(20, 'X')));
+    assertFalse(entrySet.contains(immutableEntry(15, 'X')));
   }
 
   public void testRowEntrySetRemove() {
@@ -368,13 +370,13 @@ public class TreeBasedTableTest extends AbstractTableTest<Character> {
                 20, 'X', "d", 15, 'X', "d", 20, 'X', "d", 1, 'X', "e", 5, 'X');
     SortedMap<Integer, Character> row = sortedTable.row("c");
     Set<Entry<Integer, Character>> entrySet = row.tailMap(15).entrySet();
-    assertFalse(entrySet.remove(Maps.immutableEntry(10, 'X')));
-    assertTrue(entrySet.remove(Maps.immutableEntry(20, 'X')));
-    assertFalse(entrySet.remove(Maps.immutableEntry(15, 'X')));
+    assertFalse(entrySet.remove(immutableEntry(10, 'X')));
+    assertTrue(entrySet.remove(immutableEntry(20, 'X')));
+    assertFalse(entrySet.remove(immutableEntry(15, 'X')));
     entrySet = row.entrySet();
-    assertTrue(entrySet.remove(Maps.immutableEntry(10, 'X')));
-    assertFalse(entrySet.remove(Maps.immutableEntry(20, 'X')));
-    assertFalse(entrySet.remove(Maps.immutableEntry(15, 'X')));
+    assertTrue(entrySet.remove(immutableEntry(10, 'X')));
+    assertFalse(entrySet.remove(immutableEntry(20, 'X')));
+    assertFalse(entrySet.remove(immutableEntry(15, 'X')));
   }
 
   public void testRowSize() {

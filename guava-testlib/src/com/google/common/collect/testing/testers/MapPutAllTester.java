@@ -16,23 +16,24 @@
 
 package com.google.common.collect.testing.testers;
 
+import static com.google.common.collect.testing.Helpers.getMethod;
 import static com.google.common.collect.testing.features.CollectionSize.ZERO;
 import static com.google.common.collect.testing.features.MapFeature.ALLOWS_NULL_KEYS;
 import static com.google.common.collect.testing.features.MapFeature.ALLOWS_NULL_VALUES;
 import static com.google.common.collect.testing.features.MapFeature.FAILS_FAST_ON_CONCURRENT_MODIFICATION;
 import static com.google.common.collect.testing.features.MapFeature.SUPPORTS_PUT;
+import static com.google.common.collect.testing.testers.ReflectionFreeAssertThrows.assertThrows;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.annotations.J2ktIncompatible;
 import com.google.common.collect.testing.AbstractMapTester;
-import com.google.common.collect.testing.Helpers;
 import com.google.common.collect.testing.MinimalCollection;
 import com.google.common.collect.testing.features.CollectionSize;
 import com.google.common.collect.testing.features.MapFeature;
 import java.lang.reflect.Method;
-import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -88,11 +89,7 @@ public class MapPutAllTester<K extends @Nullable Object, V extends @Nullable Obj
 
   @MapFeature.Require(absent = SUPPORTS_PUT)
   public void testPutAll_unsupportedNonePresent() {
-    try {
-      putAll(createDisjointCollection());
-      fail("putAll(nonePresent) should throw");
-    } catch (UnsupportedOperationException expected) {
-    }
+    assertThrows(UnsupportedOperationException.class, () -> putAll(createDisjointCollection()));
     expectUnchanged();
     expectMissing(e3(), e4());
   }
@@ -107,24 +104,20 @@ public class MapPutAllTester<K extends @Nullable Object, V extends @Nullable Obj
   @MapFeature.Require({FAILS_FAST_ON_CONCURRENT_MODIFICATION, SUPPORTS_PUT})
   @CollectionSize.Require(absent = ZERO)
   public void testPutAllSomePresentConcurrentWithEntrySetIteration() {
-    try {
-      Iterator<Entry<K, V>> iterator = getMap().entrySet().iterator();
-      putAll(MinimalCollection.of(e3(), e0()));
-      iterator.next();
-      fail("Expected ConcurrentModificationException");
-    } catch (ConcurrentModificationException expected) {
-      // success
-    }
+    assertThrows(
+        ConcurrentModificationException.class,
+        () -> {
+          Iterator<Entry<K, V>> iterator = getMap().entrySet().iterator();
+          putAll(MinimalCollection.of(e3(), e0()));
+          iterator.next();
+        });
   }
 
   @MapFeature.Require(absent = SUPPORTS_PUT)
   @CollectionSize.Require(absent = ZERO)
   public void testPutAll_unsupportedSomePresent() {
-    try {
-      putAll(MinimalCollection.of(e3(), e0()));
-      fail("putAll(somePresent) should throw");
-    } catch (UnsupportedOperationException expected) {
-    }
+    assertThrows(
+        UnsupportedOperationException.class, () -> putAll(MinimalCollection.of(e3(), e0())));
     expectUnchanged();
   }
 
@@ -146,11 +139,7 @@ public class MapPutAllTester<K extends @Nullable Object, V extends @Nullable Obj
 
   @MapFeature.Require(value = SUPPORTS_PUT, absent = ALLOWS_NULL_KEYS)
   public void testPutAll_nullKeyUnsupported() {
-    try {
-      putAll(containsNullKey);
-      fail("putAll(containsNullKey) should throw");
-    } catch (NullPointerException expected) {
-    }
+    assertThrows(NullPointerException.class, () -> putAll(containsNullKey));
     expectUnchanged();
     expectNullKeyMissingWhenNullKeysUnsupported(
         "Should not contain null key after unsupported putAll(containsNullKey)");
@@ -164,11 +153,7 @@ public class MapPutAllTester<K extends @Nullable Object, V extends @Nullable Obj
 
   @MapFeature.Require(value = SUPPORTS_PUT, absent = ALLOWS_NULL_VALUES)
   public void testPutAll_nullValueUnsupported() {
-    try {
-      putAll(containsNullValue);
-      fail("putAll(containsNullValue) should throw");
-    } catch (NullPointerException expected) {
-    }
+    assertThrows(NullPointerException.class, () -> putAll(containsNullValue));
     expectUnchanged();
     expectNullValueMissingWhenNullValuesUnsupported(
         "Should not contain null value after unsupported putAll(containsNullValue)");
@@ -176,15 +161,7 @@ public class MapPutAllTester<K extends @Nullable Object, V extends @Nullable Obj
 
   @MapFeature.Require(SUPPORTS_PUT)
   public void testPutAll_nullCollectionReference() {
-    try {
-      getMap().putAll(null);
-      fail("putAll(null) should throw NullPointerException");
-    } catch (NullPointerException expected) {
-    }
-  }
-
-  private Map<K, V> emptyMap() {
-    return Collections.emptyMap();
+    assertThrows(NullPointerException.class, () -> getMap().putAll(null));
   }
 
   private void putAll(Iterable<Entry<K, V>> entries) {
@@ -203,6 +180,6 @@ public class MapPutAllTester<K extends @Nullable Object, V extends @Nullable Obj
   @J2ktIncompatible
   @GwtIncompatible // reflection
   public static Method getPutAllNullKeyUnsupportedMethod() {
-    return Helpers.getMethod(MapPutAllTester.class, "testPutAll_nullKeyUnsupported");
+    return getMethod(MapPutAllTester.class, "testPutAll_nullKeyUnsupported");
   }
 }

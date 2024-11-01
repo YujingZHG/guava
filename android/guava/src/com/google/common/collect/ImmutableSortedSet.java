@@ -19,6 +19,8 @@ package com.google.common.collect;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ObjectArrays.checkElementsNotNull;
+import static java.lang.System.arraycopy;
+import static java.util.Arrays.sort;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
@@ -72,7 +74,7 @@ public abstract class ImmutableSortedSet<E> extends ImmutableSet<E>
    *
    * @since 33.2.0 (available since 21.0 in guava-jre)
    */
-  @SuppressWarnings({"AndroidJdkLibsChecker", "Java7ApiChecker"})
+  @SuppressWarnings("Java7ApiChecker")
   @IgnoreJRERequirement // Users will use this only if they're already using streams.
   public static <E> Collector<E, ?, ImmutableSortedSet<E>> toImmutableSortedSet(
       Comparator<? super E> comparator) {
@@ -168,7 +170,7 @@ public abstract class ImmutableSortedSet<E> extends ImmutableSet<E>
     contents[3] = e4;
     contents[4] = e5;
     contents[5] = e6;
-    System.arraycopy(remaining, 0, contents, 6, remaining.length);
+    arraycopy(remaining, 0, contents, 6, remaining.length);
     return construct(Ordering.natural(), contents.length, (E[]) contents);
   }
 
@@ -367,7 +369,7 @@ public abstract class ImmutableSortedSet<E> extends ImmutableSet<E>
       return emptySet(comparator);
     }
     checkElementsNotNull(contents, n);
-    Arrays.sort(contents, 0, n, comparator);
+    sort(contents, 0, n, comparator);
     int uniques = 1;
     for (int i = 1; i < n; i++) {
       E cur = contents[i];
@@ -803,7 +805,7 @@ public abstract class ImmutableSortedSet<E> extends ImmutableSet<E>
    */
   @DoNotCall("Use toImmutableSortedSet")
   @Deprecated
-  @SuppressWarnings({"AndroidJdkLibsChecker", "Java7ApiChecker"})
+  @SuppressWarnings("Java7ApiChecker")
   @IgnoreJRERequirement // Users will use this only if they're already using streams.
   public static <E> Collector<E, ?, ImmutableSet<E>> toImmutableSet() {
     throw new UnsupportedOperationException();

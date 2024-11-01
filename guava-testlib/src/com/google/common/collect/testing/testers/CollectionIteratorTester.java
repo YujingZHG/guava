@@ -16,6 +16,8 @@
 
 package com.google.common.collect.testing.testers;
 
+import static com.google.common.collect.testing.Helpers.assertEqualIgnoringOrder;
+import static com.google.common.collect.testing.Helpers.copyToList;
 import static com.google.common.collect.testing.Helpers.mapEntry;
 import static com.google.common.collect.testing.IteratorFeature.MODIFIABLE;
 import static com.google.common.collect.testing.IteratorFeature.UNMODIFIABLE;
@@ -23,17 +25,16 @@ import static com.google.common.collect.testing.features.CollectionFeature.ALLOW
 import static com.google.common.collect.testing.features.CollectionFeature.KNOWN_ORDER;
 import static com.google.common.collect.testing.features.CollectionFeature.SUPPORTS_ITERATOR_REMOVE;
 import static com.google.common.collect.testing.features.CollectionSize.ZERO;
+import static com.google.common.collect.testing.testers.ReflectionFreeAssertThrows.assertThrows;
 import static java.util.Arrays.asList;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.collect.testing.AbstractCollectionTester;
-import com.google.common.collect.testing.Helpers;
 import com.google.common.collect.testing.IteratorFeature;
 import com.google.common.collect.testing.IteratorTester;
 import com.google.common.collect.testing.features.CollectionFeature;
 import com.google.common.collect.testing.features.CollectionSize;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
@@ -59,7 +60,7 @@ public class CollectionIteratorTester<E extends @Nullable Object>
     for (E element : collection) { // uses iterator()
       iteratorElements.add(element);
     }
-    Helpers.assertEqualIgnoringOrder(Arrays.asList(createSamplesArray()), iteratorElements);
+    assertEqualIgnoringOrder(asList(createSamplesArray()), iteratorElements);
   }
 
   @CollectionFeature.Require(KNOWN_ORDER)
@@ -68,7 +69,7 @@ public class CollectionIteratorTester<E extends @Nullable Object>
     for (E element : collection) { // uses iterator()
       iteratorElements.add(element);
     }
-    List<E> expected = Helpers.copyToList(getOrderedElements());
+    List<E> expected = copyToList(getOrderedElements());
     assertEquals("Different ordered iteration", expected, iteratorElements);
   }
 
@@ -80,7 +81,7 @@ public class CollectionIteratorTester<E extends @Nullable Object>
     for (E element : collection) { // uses iterator()
       iteratorElements.add(element);
     }
-    Helpers.assertEqualIgnoringOrder(asList(createArrayWithNullElement()), iteratorElements);
+    assertEqualIgnoringOrder(asList(createArrayWithNullElement()), iteratorElements);
   }
 
   @CollectionFeature.Require(SUPPORTS_ITERATOR_REMOVE)
@@ -143,10 +144,6 @@ public class CollectionIteratorTester<E extends @Nullable Object>
       iterator.next();
     }
 
-    try {
-      iterator.next();
-      fail("iterator.next() should throw NoSuchElementException");
-    } catch (NoSuchElementException expected) {
-    }
+    assertThrows(NoSuchElementException.class, () -> iterator.next());
   }
 }

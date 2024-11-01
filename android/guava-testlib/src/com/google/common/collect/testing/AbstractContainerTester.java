@@ -16,13 +16,16 @@
 
 package com.google.common.collect.testing;
 
+import static com.google.common.collect.testing.Helpers.assertEqualIgnoringOrder;
+import static com.google.common.collect.testing.Helpers.copyToList;
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+
 import com.google.common.annotations.GwtCompatible;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.OverridingMethodsMustInvokeSuper;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.Ignore;
@@ -91,7 +94,7 @@ public abstract class AbstractContainerTester<C, E extends @Nullable Object>
    * @param elements expected contents of {@link #container}
    */
   protected final void expectContents(E... elements) {
-    expectContents(Arrays.asList(elements));
+    expectContents(asList(elements));
   }
 
   /**
@@ -111,7 +114,7 @@ public abstract class AbstractContainerTester<C, E extends @Nullable Object>
    * examining whether the features include KNOWN_ORDER?
    */
   protected void expectContents(Collection<E> expected) {
-    Helpers.assertEqualIgnoringOrder(expected, actualContents());
+    assertEqualIgnoringOrder(expected, actualContents());
   }
 
   protected void expectUnchanged() {
@@ -138,17 +141,17 @@ public abstract class AbstractContainerTester<C, E extends @Nullable Object>
    * @param elements expected additional contents of {@link #container}
    */
   protected final void expectAdded(E... elements) {
-    List<E> expected = Helpers.copyToList(getSampleElements());
-    expected.addAll(Arrays.asList(elements));
+    List<E> expected = copyToList(getSampleElements());
+    expected.addAll(asList(elements));
     expectContents(expected);
   }
 
   protected final void expectAdded(int index, E... elements) {
-    expectAdded(index, Arrays.asList(elements));
+    expectAdded(index, asList(elements));
   }
 
   protected final void expectAdded(int index, Collection<E> elements) {
-    List<E> expected = Helpers.copyToList(getSampleElements());
+    List<E> expected = copyToList(getSampleElements());
     expected.addAll(index, elements);
     expectContents(expected);
   }
@@ -221,7 +224,7 @@ public abstract class AbstractContainerTester<C, E extends @Nullable Object>
     for (E e : getSubjectGenerator().order(new ArrayList<E>(getSampleElements()))) {
       list.add(e);
     }
-    return Collections.unmodifiableList(list);
+    return unmodifiableList(list);
   }
 
   /**

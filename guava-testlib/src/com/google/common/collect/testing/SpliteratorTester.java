@@ -33,7 +33,6 @@ import com.google.common.collect.Ordering;
 import com.google.common.primitives.Ints;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -48,7 +47,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 /**
  * Tester for {@code Spliterator} implementations.
  *
- * @since 21.0
+ * @since 21.0 (but only since 33.4.0 in the Android flavor)
  */
 @GwtCompatible
 @ElementTypesAreNonnullByDefault
@@ -254,7 +253,7 @@ public final class SpliteratorTester<E extends @Nullable Object> {
   }
 
   /**
-   * @since 28.1
+   * @since 28.1 (but only since 33.4.0 in the Android flavor)
    */
   public static SpliteratorTester<Integer> ofInt(Supplier<Spliterator.OfInt> spliteratorSupplier) {
     return new SpliteratorTester<>(
@@ -264,7 +263,7 @@ public final class SpliteratorTester<E extends @Nullable Object> {
   }
 
   /**
-   * @since 28.1
+   * @since 28.1 (but only since 33.4.0 in the Android flavor)
    */
   public static SpliteratorTester<Long> ofLong(Supplier<Spliterator.OfLong> spliteratorSupplier) {
     return new SpliteratorTester<>(
@@ -274,7 +273,7 @@ public final class SpliteratorTester<E extends @Nullable Object> {
   }
 
   /**
-   * @since 28.1
+   * @since 28.1 (but only since 33.4.0 in the Android flavor)
    */
   public static SpliteratorTester<Double> ofDouble(
       Supplier<Spliterator.OfDouble> spliteratorSupplier) {
@@ -293,7 +292,7 @@ public final class SpliteratorTester<E extends @Nullable Object> {
   @SafeVarargs
   @CanIgnoreReturnValue
   public final Ordered expect(Object... elements) {
-    return expect(Arrays.asList(elements));
+    return expect(asList(elements));
   }
 
   @CanIgnoreReturnValue

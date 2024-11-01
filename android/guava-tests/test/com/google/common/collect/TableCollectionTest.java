@@ -17,6 +17,13 @@
 package com.google.common.collect;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.ReflectionFreeAssertThrows.assertThrows;
+import static com.google.common.collect.Tables.immutableCell;
+import static com.google.common.collect.Tables.transformValues;
+import static com.google.common.collect.Tables.transpose;
+import static com.google.common.collect.Tables.unmodifiableRowSortedTable;
+import static com.google.common.collect.Tables.unmodifiableTable;
+import static java.util.Collections.sort;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
@@ -37,7 +44,6 @@ import com.google.common.collect.testing.features.CollectionFeature;
 import com.google.common.collect.testing.features.CollectionSize;
 import com.google.common.collect.testing.features.Feature;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -131,7 +137,7 @@ public class TableCollectionTest extends TestCase {
 
                   @Override
                   public List<String> order(List<String> insertionOrder) {
-                    Collections.sort(insertionOrder);
+                    sort(insertionOrder);
                     return insertionOrder;
                   }
                 })
@@ -147,7 +153,7 @@ public class TableCollectionTest extends TestCase {
                   protected Set<String> create(String[] elements) {
                     Table<String, Integer, Character> table = HashBasedTable.create();
                     populateForRowKeySet(table, elements);
-                    return Tables.unmodifiableTable(table).rowKeySet();
+                    return unmodifiableTable(table).rowKeySet();
                   }
                 })
             .named("unmodifiableTable[HashBasedTable].rowKeySet")
@@ -161,12 +167,12 @@ public class TableCollectionTest extends TestCase {
                   protected Set<String> create(String[] elements) {
                     RowSortedTable<String, Integer, Character> table = TreeBasedTable.create();
                     populateForRowKeySet(table, elements);
-                    return Tables.unmodifiableRowSortedTable(table).rowKeySet();
+                    return unmodifiableRowSortedTable(table).rowKeySet();
                   }
 
                   @Override
                   public List<String> order(List<String> insertionOrder) {
-                    Collections.sort(insertionOrder);
+                    sort(insertionOrder);
                     return insertionOrder;
                   }
                 })
@@ -220,7 +226,7 @@ public class TableCollectionTest extends TestCase {
 
                   @Override
                   public List<String> order(List<String> insertionOrder) {
-                    Collections.sort(insertionOrder);
+                    sort(insertionOrder);
                     return insertionOrder;
                   }
                 })
@@ -235,7 +241,7 @@ public class TableCollectionTest extends TestCase {
                   protected Set<String> create(String[] elements) {
                     Table<Integer, String, Character> table = HashBasedTable.create();
                     populateForColumnKeySet(table, elements);
-                    return Tables.unmodifiableTable(table).columnKeySet();
+                    return unmodifiableTable(table).columnKeySet();
                   }
                 })
             .named("unmodifiableTable[HashBasedTable].columnKeySet")
@@ -249,12 +255,12 @@ public class TableCollectionTest extends TestCase {
                   protected Set<String> create(String[] elements) {
                     RowSortedTable<Integer, String, Character> table = TreeBasedTable.create();
                     populateForColumnKeySet(table, elements);
-                    return Tables.unmodifiableRowSortedTable(table).columnKeySet();
+                    return unmodifiableRowSortedTable(table).columnKeySet();
                   }
 
                   @Override
                   public List<String> order(List<String> insertionOrder) {
-                    Collections.sort(insertionOrder);
+                    sort(insertionOrder);
                     return insertionOrder;
                   }
                 })
@@ -336,7 +342,7 @@ public class TableCollectionTest extends TestCase {
                     for (int i = 0; i < elements.length; i++) {
                       table.put(i, 'a', "x" + checkNotNull(elements[i]));
                     }
-                    return Tables.transformValues(table, removeFirstCharacter).values();
+                    return transformValues(table, removeFirstCharacter).values();
                   }
                 })
             .named("TransformValues.values")
@@ -353,7 +359,7 @@ public class TableCollectionTest extends TestCase {
                     table.put(1, 'a', "foo");
                     table.clear();
                     populateForValues(table, elements);
-                    return Tables.unmodifiableTable(table).values();
+                    return unmodifiableTable(table).values();
                   }
                 })
             .named("unmodifiableTable[HashBasedTable].values")
@@ -369,7 +375,7 @@ public class TableCollectionTest extends TestCase {
                     table.put(1, 'a', "foo");
                     table.clear();
                     populateForValues(table, elements);
-                    return Tables.unmodifiableRowSortedTable(table).values();
+                    return unmodifiableRowSortedTable(table).values();
                   }
                 })
             .named("unmodifiableTable[TreeBasedTable].values")
@@ -382,11 +388,11 @@ public class TableCollectionTest extends TestCase {
                   @Override
                   public SampleElements<Cell<String, Integer, Character>> samples() {
                     return new SampleElements<>(
-                        Tables.immutableCell("bar", 1, 'a'),
-                        Tables.immutableCell("bar", 2, 'b'),
-                        Tables.immutableCell("bar", 3, (Character) null),
-                        Tables.immutableCell("bar", 4, 'b'),
-                        Tables.immutableCell("bar", 5, 'b'));
+                        immutableCell("bar", 1, 'a'),
+                        immutableCell("bar", 2, 'b'),
+                        immutableCell("bar", 3, (Character) null),
+                        immutableCell("bar", 4, 'b'),
+                        immutableCell("bar", 5, 'b'));
                   }
 
                   @Override
@@ -459,7 +465,7 @@ public class TableCollectionTest extends TestCase {
                   @Override
                   Table<String, Integer, Character> createTable() {
                     Table<Integer, String, Character> original = TreeBasedTable.create();
-                    return Tables.transpose(original);
+                    return transpose(original);
                   }
                 })
             .named("TransposedTable.cellSet")
@@ -486,7 +492,7 @@ public class TableCollectionTest extends TestCase {
                           (Cell<String, Integer, Character>) element;
                       table.put(cell.getRowKey(), cell.getColumnKey(), cell.getValue());
                     }
-                    return Tables.transformValues(table, Functions.<Character>identity()).cellSet();
+                    return transformValues(table, Functions.<Character>identity()).cellSet();
                   }
                 })
             .named("TransformValues.cellSet")
@@ -501,8 +507,7 @@ public class TableCollectionTest extends TestCase {
                 new TestCellSetGenerator() {
                   @Override
                   Table<String, Integer, Character> createTable() {
-                    return Tables.unmodifiableTable(
-                        HashBasedTable.<String, Integer, Character>create());
+                    return unmodifiableTable(HashBasedTable.<String, Integer, Character>create());
                   }
 
                   @Override
@@ -514,7 +519,7 @@ public class TableCollectionTest extends TestCase {
                           (Cell<String, Integer, Character>) element;
                       table.put(cell.getRowKey(), cell.getColumnKey(), cell.getValue());
                     }
-                    return Tables.unmodifiableTable(table).cellSet();
+                    return unmodifiableTable(table).cellSet();
                   }
                 })
             .named("unmodifiableTable[HashBasedTable].cellSet")
@@ -526,7 +531,7 @@ public class TableCollectionTest extends TestCase {
                 new TestCellSetGenerator() {
                   @Override
                   RowSortedTable<String, Integer, Character> createTable() {
-                    return Tables.unmodifiableRowSortedTable(
+                    return unmodifiableRowSortedTable(
                         TreeBasedTable.<String, Integer, Character>create());
                   }
 
@@ -539,7 +544,7 @@ public class TableCollectionTest extends TestCase {
                           (Cell<String, Integer, Character>) element;
                       table.put(cell.getRowKey(), cell.getColumnKey(), cell.getValue());
                     }
-                    return Tables.unmodifiableRowSortedTable(table).cellSet();
+                    return unmodifiableRowSortedTable(table).cellSet();
                   }
                 })
             .named("unmodifiableRowSortedTable[TreeBasedTable].cellSet")
@@ -593,7 +598,7 @@ public class TableCollectionTest extends TestCase {
 
                   @Override
                   public List<String> order(List<String> insertionOrder) {
-                    Collections.sort(insertionOrder);
+                    sort(insertionOrder);
                     return insertionOrder;
                   }
                 })
@@ -608,9 +613,7 @@ public class TableCollectionTest extends TestCase {
                   protected Set<String> create(String[] elements) {
                     Table<String, Integer, Character> table = HashBasedTable.create();
                     populateForRowKeySet(table, elements);
-                    return Tables.transformValues(table, Functions.toStringFunction())
-                        .column(1)
-                        .keySet();
+                    return transformValues(table, Functions.toStringFunction()).column(1).keySet();
                   }
                 })
             .named("TransformValues.column.keySet")
@@ -624,7 +627,7 @@ public class TableCollectionTest extends TestCase {
                   protected Set<String> create(String[] elements) {
                     Table<String, Integer, Character> table = HashBasedTable.create();
                     populateForRowKeySet(table, elements);
-                    return Tables.unmodifiableTable(table).column(1).keySet();
+                    return unmodifiableTable(table).column(1).keySet();
                   }
                 })
             .named("unmodifiableTable[HashBasedTable].column.keySet")
@@ -638,12 +641,12 @@ public class TableCollectionTest extends TestCase {
                   protected Set<String> create(String[] elements) {
                     RowSortedTable<String, Integer, Character> table = TreeBasedTable.create();
                     populateForRowKeySet(table, elements);
-                    return Tables.unmodifiableRowSortedTable(table).column(1).keySet();
+                    return unmodifiableRowSortedTable(table).column(1).keySet();
                   }
 
                   @Override
                   public List<String> order(List<String> insertionOrder) {
-                    Collections.sort(insertionOrder);
+                    sort(insertionOrder);
                     return insertionOrder;
                   }
                 })
@@ -682,11 +685,11 @@ public class TableCollectionTest extends TestCase {
     @Override
     public SampleElements<Cell<String, Integer, Character>> samples() {
       return new SampleElements<>(
-          Tables.immutableCell("bar", 1, 'a'),
-          Tables.immutableCell("bar", 2, 'b'),
-          Tables.immutableCell("foo", 3, 'c'),
-          Tables.immutableCell("bar", 1, 'b'),
-          Tables.immutableCell("cat", 2, 'b'));
+          immutableCell("bar", 1, 'a'),
+          immutableCell("bar", 2, 'b'),
+          immutableCell("foo", 3, 'c'),
+          immutableCell("bar", 1, 'b'),
+          immutableCell("cat", 2, 'b'));
     }
 
     @Override
@@ -837,13 +840,12 @@ public class TableCollectionTest extends TestCase {
     @Override
     public void testRemove() {
       final Map<String, Map<Integer, Character>> map;
-      final String keyToRemove;
       try {
         map = makePopulatedMap();
       } catch (UnsupportedOperationException e) {
         return;
       }
-      keyToRemove = map.keySet().iterator().next();
+      final String keyToRemove = map.keySet().iterator().next();
       if (supportsRemove) {
         int initialSize = map.size();
         map.get(keyToRemove);
@@ -853,11 +855,7 @@ public class TableCollectionTest extends TestCase {
         assertFalse(map.containsKey(keyToRemove));
         assertEquals(initialSize - 1, map.size());
       } else {
-        try {
-          map.remove(keyToRemove);
-          fail("Expected UnsupportedOperationException.");
-        } catch (UnsupportedOperationException expected) {
-        }
+        assertThrows(UnsupportedOperationException.class, () -> map.remove(keyToRemove));
       }
       assertInvariants(map);
     }

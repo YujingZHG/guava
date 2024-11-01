@@ -16,18 +16,20 @@
 
 package com.google.common.collect.testing.testers;
 
+import static com.google.common.collect.testing.Helpers.copyToList;
+import static com.google.common.collect.testing.Helpers.getMethod;
 import static com.google.common.collect.testing.IteratorFeature.MODIFIABLE;
 import static com.google.common.collect.testing.IteratorFeature.UNMODIFIABLE;
 import static com.google.common.collect.testing.features.CollectionFeature.SUPPORTS_REMOVE;
 import static com.google.common.collect.testing.features.ListFeature.SUPPORTS_ADD_WITH_INDEX;
 import static com.google.common.collect.testing.features.ListFeature.SUPPORTS_SET;
 import static com.google.common.collect.testing.testers.Platform.listListIteratorTesterNumIterations;
+import static com.google.common.collect.testing.testers.ReflectionFreeAssertThrows.assertThrows;
 import static java.util.Collections.singleton;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.annotations.J2ktIncompatible;
-import com.google.common.collect.testing.Helpers;
 import com.google.common.collect.testing.IteratorFeature;
 import com.google.common.collect.testing.ListIteratorTester;
 import com.google.common.collect.testing.features.CollectionFeature;
@@ -73,7 +75,7 @@ public class ListListIteratorTester<E extends @Nullable Object> extends Abstract
         listListIteratorTesterNumIterations(),
         singleton(e4()),
         features,
-        Helpers.copyToList(getOrderedElements()),
+        copyToList(getOrderedElements()),
         0) {
       @Override
       protected ListIterator<E> newTargetIterator() {
@@ -89,19 +91,12 @@ public class ListListIteratorTester<E extends @Nullable Object> extends Abstract
   }
 
   public void testListIterator_tooLow() {
-    try {
-      getList().listIterator(-1);
-      fail();
-    } catch (IndexOutOfBoundsException expected) {
-    }
+    assertThrows(IndexOutOfBoundsException.class, () -> getList().listIterator(-1));
   }
 
   public void testListIterator_tooHigh() {
-    try {
-      getList().listIterator(getNumElements() + 1);
-      fail();
-    } catch (IndexOutOfBoundsException expected) {
-    }
+    assertThrows(
+        IndexOutOfBoundsException.class, () -> getList().listIterator(getNumElements() + 1));
   }
 
   public void testListIterator_atSize() {
@@ -118,7 +113,7 @@ public class ListListIteratorTester<E extends @Nullable Object> extends Abstract
   @J2ktIncompatible
   @GwtIncompatible // reflection
   public static Method getListIteratorFullyModifiableMethod() {
-    return Helpers.getMethod(ListListIteratorTester.class, "testListIterator_fullyModifiable");
+    return getMethod(ListListIteratorTester.class, "testListIterator_fullyModifiable");
   }
 
   /**
@@ -128,6 +123,6 @@ public class ListListIteratorTester<E extends @Nullable Object> extends Abstract
   @J2ktIncompatible
   @GwtIncompatible // reflection
   public static Method getListIteratorUnmodifiableMethod() {
-    return Helpers.getMethod(ListListIteratorTester.class, "testListIterator_unmodifiable");
+    return getMethod(ListListIteratorTester.class, "testListIterator_unmodifiable");
   }
 }
